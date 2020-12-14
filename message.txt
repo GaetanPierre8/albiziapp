@@ -1,0 +1,258 @@
+//java -jar selenium-server-standalone-3.141.59.jar
+package com.automation.selenium.practice;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.By.ByXPath;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+public class ShopTest {
+	
+	/** Defined the target browser **/
+	private static final DesiredCapabilities CAPABILITY = DesiredCapabilities.chrome();
+		
+	/** URL of Selenium node **/
+	private static final String SELENIUM_SERVER_URL = "http://127.0.0.1:4444/wd/hub";
+
+	/** URL opened in first **/
+	private static final String BASIC_URL = "https://albiziapp.ozytis.fr/login";
+//https://www.openstreetmap.org/login?referer=%2Foauth%2Fauthorize%3Foauth_callback%3Dhttps%253A%252F%252Falbiziapp.ozytis.fr%252Fland.html%26oauth_token%3Dz2PQW2jIUXKNmijEIYbVOCvRRlzMTsytbTjdo5mF
+	
+	/** Driver used to link with Selenium API **/
+	private WebDriver mDriver = null;
+	
+	/**
+	 * Setup phase, it will be launched before any test
+	 * 
+	 * @throws MalformedURLException If based url is not the correct one
+	 * @throws InterruptedException  Exception thrown if the thread is interrupted
+	 */
+	@Before
+	public void setup() throws MalformedURLException, InterruptedException {	
+		CAPABILITY.setCapability("browserstack.geoLocation", "FR");
+		
+		// Create a new instance of the driver 
+		mDriver = new RemoteWebDriver(new URL(SELENIUM_SERVER_URL), CAPABILITY);
+		// And now use this to open base url
+		mDriver.navigate().to(BASIC_URL);
+		
+
+		// Ask to the driver to wait for 3s when an element is not found
+		mDriver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+		mDriver.manage().window().maximize();
+	}
+
+	/**
+	 * Simple scenario: - Select the search field - Fill it - Launch a search -
+	 * Check if there is a result
+	 * 
+	 * @throws InterruptedException Exception thrown if the thread is interrupted
+	 */
+	
+	/**
+	 * foncion pour se connecter a l'application avec le compte test_user
+	 * @throws InterruptedException
+	 */
+	private void login() {
+		//connexion a Albiziapp
+		//cliquer sur le bouton se connecter
+		WebElement logButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Se connecter avec OpenStreet Map')]"));
+		logButton.click();
+		
+		// Switch to new window opened
+		for(String winHandle : mDriver.getWindowHandles()){
+		    mDriver.switchTo().window(winHandle);
+		}
+		
+		//Compléter le champ Adresse de courriel ou nom d’utilisateur 
+		WebElement nameField = mDriver.findElement(By.name("username"));
+		nameField.sendKeys("lp2020.tql@gmail.com");
+		
+		//Compléter le champ Mot de passe :
+		WebElement passwordField = mDriver.findElement(By.name("password"));
+		passwordField.sendKeys("2020lptqlAlbiziapp");
+		
+		//Cliquer sur  le bouton longin
+		WebElement loginButton = mDriver.findElement((By.name("commit")));
+		loginButton.click();
+		
+		//Cliquer sur  le bouton accorder l'accès
+		WebElement accesButton = mDriver.findElement((By.name("commit")));
+		accesButton.click();
+	}
+	
+	@Test
+	public void missionTest() throws InterruptedException {
+		// Store the current window handle
+		String winHandleBefore = mDriver.getWindowHandle();
+		
+		// Perform the click operation that opens new window
+		
+		//connexion a Albiziapp
+		login();
+		
+		// Switch back to original browser (first window)
+		mDriver.switchTo().window(winHandleBefore);
+		
+		//cliquer sur le bouton mission
+		WebElement missionButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Score')]"));
+		missionButton.click();
+		
+		
+		// Close the new window, if that window no more required
+		//mDriver.close();
+		// Continue with original browser (first window)
+		
+		Thread.sleep(5000);
+	}
+
+	@Test
+	public void floreTest() throws InterruptedException {
+		// Store the current window handle
+		String winHandleBefore = mDriver.getWindowHandle();
+		
+		// Perform the click operation that opens new window
+		
+		//connexion a Albiziapp
+				login();
+		
+		// Switch back to original browser (first window)
+		mDriver.switchTo().window(winHandleBefore);
+		
+		//cliquer sur le menu burger
+		WebElement menuButton = mDriver.findElement(ByXPath.xpath("//*[@aria-label='menu']"));
+		menuButton.click();
+		
+		
+		//cliquer sur le bouton flore dans le menu 
+		WebElement floreButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Flore')]"));
+		floreButton.click();
+		
+		//cliquer sur le bouton de l'ailanthus altissima
+		WebElement altissimaButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Ailanthus Altissima')]"));
+		altissimaButton.click();
+		
+		//cliquer sur le bouton habitat de l'ailanthus altissima
+		WebElement altissimaHabitatButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Habitat')]"));
+		altissimaHabitatButton.click();
+		
+		// Close the new window, if that window no more required
+		//mDriver.close();
+		// Continue with original browser (first window)
+		
+		Thread.sleep(5000);
+	}
+	
+	@Test
+	public void relevePhotoTest() throws InterruptedException {
+		
+		// Store the current window handle
+		String winHandleBefore = mDriver.getWindowHandle();
+		
+		// Perform the click operation that opens new window
+		
+		//connexion a Albiziapp
+				login();
+		
+		// Switch back to original browser (first window)
+		mDriver.switchTo().window(winHandleBefore);
+		
+		WebElement carteButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Carte')]"));
+		carteButton.click();
+		
+		Thread.sleep(5000);
+		
+		//permet de cliquer à un endroit de la carte
+		//Attention si un relever est présent a l'endroit on l'on veut cliquer, cela ne fonctionnera pas
+		Actions builder = new Actions(mDriver);
+        builder.moveToElement(mDriver.findElement(ByXPath.xpath("//*[@id='root']/div/div[1]/div[1]")), 0, 0);
+        builder.moveByOffset(100, 100).click().build().perform();
+        
+        //cliquer sur le bouton valider du pop-up pour aller à la page de création d'un relevé
+		WebElement validerAjoutReleveButton = mDriver.findElement(ByXPath.xpath("//*[@class='MuiDialog-root']/div/div[1]/div[2]/button[2]"));
+		validerAjoutReleveButton.click();
+		
+		//Compléter le genre commun par Erable
+		WebElement genreCommunField = mDriver.findElement(ByXPath.xpath("//*[@id='root']/div/div/div/div/div/div/input"));
+		genreCommunField.sendKeys("Erable" +Keys.ARROW_DOWN + Keys.ENTER);
+		
+		//Compléter le genre latin par Acer
+		WebElement genreLatinField = mDriver.findElement(ByXPath.xpath("//*[@id='root']/div/div/div[2]/div/div/div/input"));
+		genreLatinField.sendKeys("Acer" +Keys.ARROW_DOWN + Keys.ENTER);
+		
+		//Compléter l'espèce commune par Érable champêtre
+		WebElement especeCommuneField = mDriver.findElement(ByXPath.xpath("//*[@id='root']/div/div/div[3]/div/div/div/input"));
+		 especeCommuneField.sendKeys("Érable champêtre" +Keys.ARROW_DOWN + Keys.ENTER);
+				
+		//Compléter l'espèce latine par Acer Campestre
+		WebElement especeLatineField = mDriver.findElement(ByXPath.xpath("//*[@id='root']/div/div/div[4]/div/div/div/input"));
+		especeLatineField.sendKeys("Acer Campestre" +Keys.ARROW_DOWN + Keys.ENTER);
+		
+		//Cocher le bouton de confiance sur confiant
+		WebElement confiantButton = mDriver.findElement(ByXPath.xpath("//*[@id='root']/div/div/div[5]/label[3]/span/span/input"));
+		confiantButton.click();
+		
+		/**
+		//ajouter la photo 01 se trouvant sur sont bureau au releve
+		//En testant les étapes intermédiaire pour ajouter la photo
+		//néanmoins cette version ne marche pas car il manque une étape pour sélectionner la photo dans notre dossier
+	
+		WebElement photoButton = mDriver.findElement(ByXPath.xpath("//*[@id='root']/div/div/div[6]/div/div"));
+		photoButton.click();  
+	
+		
+		WebElement photoExistanteButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Choisir une photo existante')]"));
+		photoExistanteButton.click();
+		
+		// Switch to new window opened
+		for(String winHandle : mDriver.getWindowHandles()){
+		    mDriver.switchTo().window(winHandle);
+		}
+		*/
+		
+		//ajouter la photo 01 se trouvant sur son bureau au releve
+		WebElement photo = mDriver.findElement(By.cssSelector("input[type='file']"));
+		photo.sendKeys("C:\\Users\\Valentin Hélary\\Desktop\\01.jpg");
+	    
+		//cliquer sur le bounton valider du releve
+		WebElement validerButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Valider')]"));
+		validerButton.click();
+		
+		WebElement validerPopUpReleveButton = mDriver.findElement(ByXPath.xpath("//*[@class='MuiDialog-root']/div[3]/div/div[2]/button[2]"));
+		validerPopUpReleveButton.click();
+		
+		//cliquer sur le bounton relevés du menu
+		WebElement releveButton = mDriver.findElement(ByXPath.xpath("//*[contains(text(), 'Relevés')]"));
+		releveButton.click();
+		
+		//cliquer sur le dernier relevés effectué dans la page mes relevés
+		WebElement dernierReleveButton = mDriver.findElement(ByXPath.xpath("//ul[@class='MuiList-root MuiList-padding']//following::li[last()]/div/span"));
+		dernierReleveButton.click();
+		
+		// Close the new window, if that window no more required
+		//mDriver.close();
+		// Continue with original browser (first window)
+		
+		Thread.sleep(5000);
+	}
+	
+	/**
+	 * Kill the driver once all the tests are run
+	 */
+	@After
+	public void teardown() {
+		mDriver.quit();
+	}
+}
