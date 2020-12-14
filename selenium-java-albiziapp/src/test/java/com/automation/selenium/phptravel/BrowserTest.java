@@ -98,7 +98,7 @@ public class BrowserTest {
 		Thread.sleep(500); // IT IS BAD. NEVER DO THIS
 
 		String vCurrentURL = mDriver.getCurrentUrl();
-
+		//Test ajout git
 		// Check the current URL
 		assertEquals("http://iut-laval.univ-lemans.fr/fr/index.html", vCurrentURL);
 	}
